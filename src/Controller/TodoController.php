@@ -33,7 +33,7 @@ class TodoController extends AbstractController
      */
     public function index(): Response
     {
-        $data = $this->todoRepository->findAll();
+        $data = $this->todoRepository->findBy([], ["id"=>"DESC"]);
         return $this->json($data);
     }
 
@@ -51,7 +51,7 @@ class TodoController extends AbstractController
             }
             $entityManager->persist($todo);
             $entityManager->flush();
-            $this->json(["status"=>201, "message"=>"sucess"],201);
+            return $this->json(["status"=>201, "message"=>"sucess", "newId"=>$todo->getId()],201);
         } catch (\Throwable $th) {
             return $this->json(["status"=> 400, "message"=>"Not encodable value exception."]);
         }
