@@ -5,10 +5,13 @@ export default class List extends Component{
         super();
         this.state={
             newTodo:"",
+            messages: null,
             todos: []
         }
         this.onChangeHandler = this.onChangeHandler.bind(this)
         this.onSubmitHandler = this.onSubmitHandler.bind(this)
+        this.displayMessage = this.displayMessage.bind(this)
+        this.displayTodos = this.displayTodos.bind(this)
     }
 
     componentDidMount(){
@@ -51,23 +54,51 @@ export default class List extends Component{
             li.id = response.newId
             ul.unshift(li)
             this.setState({
-                todos: ul
+                todos: ul,
+                messages:{
+                    cls: "alert alert-success text-center",
+                    content: "One todo have been added !"
+                }
+            })
+        }else{
+            this.setState({
+                messages:{
+                    cls: "alert alert-danger text-center",
+                    content: "Something is wrong !"
+                }
             })
         }
     }
+
+    displayMessage(){
+        setTimeout(()=>{this.setState({messages:null})},4000);
+        return (
+            <div className={this.state.messages.cls}>
+                    <strong>{this.state.messages.content}</strong>
+            </div>
+        );
+    }
+    displayTodos(){
+        return(
+            <div>
+                {this.state.todos.map((todo)=>(<li key={todo.id}>{todo.content}</li>)) }
+            </div>
+        );
+    }
     render(){
         return (
-            <div>
+            <div className="mt-3">
+                {this.state.messages == null? "": this.displayMessage()}
                 <div className="row mt-5">
                     <textarea type = "text" value={this.state.newTodo} onChange={this.onChangeHandler}/>
                 </div>
-                <div className="row mt-5">
+                <div className="row mt-2">
                     <input className="btn btn-primary block" type = "button" value="Submit" onClick={this.onSubmitHandler}/>
                 </div>
                 <div className="row mt-5">
                     <ul>
-                        {this.state.newTodo !== "" ? <li>{this.state.newTodo}</li> : ""}
-                        {this.state.todos.map((todo)=>(<li key={todo.id}>{todo.content}</li>)) }
+                        {this.state.newTodo !== "" ? <li className="mb-2 text-secondary">{this.state.newTodo}</li> : ""}
+                        {this.state.todos.length<1? <h3 className="text-center">Nothing to display</h3> : this.displayTodos()}
                     </ul>
                 </div>
             </div>
